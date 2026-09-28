@@ -1,3 +1,4 @@
+#!/bin/bash
 # ================================================================
 # diy-part1.sh —— 只做一件事：拉取可选插件到 package/custom
 # 运行目录: ponwrt 源码根目录（feeds 安装之后、加载 .config 之前）
@@ -79,15 +80,15 @@ if [ "$ADD_LUCI_APP" = "true" ]; then
     exit 1
   fi
 
-#  for p in luci-app-natmode luci-app-pon-status; do
-#    if [ ! -f "$LUCI_APP_TMP/$p/Makefile" ]; then
-#      echo "::error::$LUCI_APP_TMP/$p/Makefile 不存在，包无法被索引"
-#      exit 1
-#    fi
-#    rm -rf "$PKG_DIR/$p"
-#    cp -r "$LUCI_APP_TMP/$p" "$PKG_DIR/"
-#    echo "✅ 已拷贝: $p  (版本 $(grep -m1 '^PKG_VERSION' "$PKG_DIR/$p/Makefile" 2>/dev/null | sed 's/PKG_VERSION:=//'))"
-#  done
+  for p in luci-app-pon-status; do
+    if [ ! -f "$LUCI_APP_TMP/$p/Makefile" ]; then
+      echo "::error::$LUCI_APP_TMP/$p/Makefile 不存在，包无法被索引"
+      exit 1
+    fi
+    rm -rf "$PKG_DIR/$p"
+    cp -r "$LUCI_APP_TMP/$p" "$PKG_DIR/"
+    echo "✅ 已拷贝: $p  (版本 $(grep -m1 '^PKG_VERSION' "$PKG_DIR/$p/Makefile" 2>/dev/null | sed 's/PKG_VERSION:=//'))"
+  done
 
   rm -rf "$LUCI_APP_TMP"
 fi
@@ -190,12 +191,12 @@ if [ "$ADD_AIROHA_NPU" = "true" ] && [ ! -d "$PKG_DIR/luci-app-airoha-npu" ]; th
 fi
 
 # natmode / pon-status 来自 qwe3017/luci-app（config 里也是 =y）
-#for p in luci-app-natmode luci-app-pon-status; do
-#  if [ "$ADD_LUCI_APP" = "true" ] && [ ! -d "$PKG_DIR/$p" ]; then
-#    echo "::error::$p 未拉到，config 里的 =y 会被 defconfig 剔除"
-#    exit 1
-#  fi
-#done
+for p in luci-app-natmode luci-app-pon-status; do
+  if [ "$ADD_LUCI_APP" = "true" ] && [ ! -d "$PKG_DIR/$p" ]; then
+    echo "::error::$p 未拉到，config 里的 =y 会被 defconfig 剔除"
+    exit 1
+  fi
+done
 
 # ---------------------------------------------------------
 # 清理重复嵌套目录
